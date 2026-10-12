@@ -161,6 +161,11 @@ window.onBeforeCloseH5 = function () { dbg("onBeforeCloseH5"); };
 
 /* ---- render ---- */
 function fmtSize(n) {
+  if (typeof n === "string") {
+    var s = n.trim();
+    if (s && isNaN(Number(s))) return s;   /* native already formatted it */
+    n = Number(s);
+  }
   n = Number(n);
   if (!n || isNaN(n)) return "--";
   var u = ["B", "KB", "MB", "GB"], i = 0;

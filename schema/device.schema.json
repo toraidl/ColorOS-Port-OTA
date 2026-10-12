@@ -49,6 +49,14 @@
       "type": "string",
       "description": "Repo-relative path to the Markdown changelog"
     },
+    "versionTime": {
+      "type": "string",
+      "description": "Human readable release date shown on the update card, e.g. 2026.10.10"
+    },
+    "summary": {
+      "type": "string",
+      "description": "One line summary rendered above the changelog by the H5 page"
+    },
     "description": {
       "type": "string",
       "description": "Inline description (source manifests normally use changelog instead)"

@@ -12,5 +12,7 @@
   "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.152/ota_full-KB2000_17.0.0.152-PYB110-10122308-CN-2026-10-01-2d64b20bc7.zip/download",
   "id": "KB2000_17.0.0.152",
   "changelog": "changelogs/KB2000/17.0.0.152.md",
+  "versionTime": "2026.10.01",
+  "summary": "ColorOS 17.0.0.152 移植版更新",
   "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html"
 }

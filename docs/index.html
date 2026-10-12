@@ -300,7 +300,9 @@ document.getElementById("chev").addEventListener("click", function () {
 document.getElementById("pill").addEventListener("click", function () {
   if (downloading) return;
   this.setAttribute("disabled", "disabled");
-  callNative("onClickButtonFromH5", { type: "highLight" }).then(function (r) {
+  /* "positiveButton" is the type FragmentBusy.l() routes to
+     EntryActivity.prepareDownload(); "highLight" goes to the beta-invite flow. */
+  callNative("onClickButtonFromH5", { type: "positiveButton" }).then(function (r) {
     dbg(["download ->", r]);
     var code = r && r.status ? r.status.code : 1;
     if (code !== 0) document.getElementById("pill").removeAttribute("disabled");

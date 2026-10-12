@@ -15,6 +15,6 @@
   "id": "KB2000_17.0.0.152",
   "versionTime": "2026.10.01",
   "summary": "ColorOS 17.0.0.152 移植版更新",
-  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=2",
+  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=3",
   "description": "<h2>OnePlus 8T (KB2000) 17.0.0.152</h2>\n<ul>\n<li>Synced to ColorOS 17.0.0.152 (PYB110 base, 2026-10-01).</li>\n<li>Port compatibility fixes for the OnePlus 8T kernel and vendor blobs.</li>\n<li>This entry is served by the community OTA metadata repo; the device keeps</li>\n</ul>\n<p>  the stock ColorOS update UI.</p>"
 }

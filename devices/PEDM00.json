@@ -1,0 +1,15 @@
+{
+  "device": "PEDM00",
+  "aliases": ["OPPO Find X3"],
+  "version": "PEDM00_17.0.0.106(CN01)",
+  "romVersion": "PEDM00_17.0.0.106(CN01)",
+  "coloros": "17.0.0",
+  "android": "17",
+  "type": "official",
+  "packageType": 0,
+  "size": 0,
+  "md5": "",
+  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.106/ota_full-PEDM00_17.0.0.106-PMA110-10100838-CN-2026-09-01-1a9b939011.zip/download",
+  "id": "PEDM00_17.0.0.106",
+  "changelog": "changelogs/PEDM00/17.0.0.106.md"
+}

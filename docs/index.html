@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ColorOS 软件更新</title>
+<style>
+  :root{
+    --bg0:#0b0820; --bg1:#1b1140; --fg:#ffffff; --dim:rgba(255,255,255,.62);
+    --card:rgba(255,255,255,.08); --line:rgba(255,255,255,.14);
+    --accent:#ff8a4c; --accent2:#c064ff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{
+    background:
+      radial-gradient(120% 80% at 80% 12%, rgba(255,138,76,.34), transparent 60%),
+      radial-gradient(120% 90% at 12% 30%, rgba(192,100,255,.36), transparent 62%),
+      linear-gradient(180deg,var(--bg1),var(--bg0) 62%);
+    color:var(--fg);
+    font-family:-apple-system,"OPPOSans","Oplus Sans","Noto Sans SC",system-ui,sans-serif;
+    min-height:100%;display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top,0px) + 24px) 22px calc(env(safe-area-inset-bottom,0px) + 18px);
+  }
+  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:46vh}
+  .big{
+    font-size:132px;line-height:.92;font-weight:700;letter-spacing:0;
+    background:linear-gradient(180deg,#fff 8%,#ffd9c2 42%,#e9b7ff 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand{margin-top:6px;font-size:34px;font-weight:600;letter-spacing:.5px;opacity:.95}
+  .model{margin-top:8px;font-size:20px;color:var(--dim)}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:8px;
+    padding:16px 16px 14px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .card h2{margin:0 0 10px;font-size:17px;font-weight:600}
+  .row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;font-size:14px}
+  .row .k{color:var(--dim);flex:0 0 auto}
+  .row .v{text-align:right;word-break:break-all}
+  #log{margin:10px 0 0;font-size:14px;line-height:1.62;color:rgba(255,255,255,.86);
+       max-height:26vh;overflow:auto;white-space:pre-wrap;word-break:break-word}
+  #log.empty{color:var(--dim)}
+  .actions{display:flex;gap:12px;margin-top:14px}
+  button{
+    flex:1;height:48px;border-radius:24px;border:0;font-size:16px;font-weight:600;
+    font-family:inherit;color:#fff;background:rgba(255,255,255,.14);cursor:pointer;
+  }
+  button.primary{background:linear-gradient(92deg,var(--accent),var(--accent2));color:#fff}
+  button:active{transform:scale(.985);opacity:.92}
+  button[disabled]{opacity:.5;pointer-events:none}
+  .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:12px;display:none}
+  .bar.shown{display:block}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(92deg,var(--accent),var(--accent2));transition:width .3s}
+  #dbg{position:fixed;left:8px;right:8px;bottom:8px;max-height:34vh;overflow:auto;
+       font:11px/1.45 ui-monospace,monospace;white-space:pre-wrap;background:rgba(0,0,0,.72);
+       border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:8px;display:none;z-index:9}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div class="big" id="bigVer">17</div>
+    <div class="brand">ColorOS</div>
+    <div class="model" id="modelLine"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="cardTitle">发现新版本</h2>
+    <div class="row"><span class="k">新版本</span><span class="v" id="newVer">--</span></div>
+    <div class="row"><span class="k">当前版本</span><span class="v" id="curVer">--</span></div>
+    <div class="row"><span class="k">更新包大小</span><span class="v" id="size">--</span></div>
+    <div class="row"><span class="k">发布时间</span><span class="v" id="time">--</span></div>
+    <div id="log" class="empty">暂无更新日志</div>
+    <div class="bar" id="bar"><i id="barFill"></i></div>
+    <div class="actions">
+      <button id="later">稍后</button>
+      <button id="ok" class="primary">下载并安装</button>
+    </div>
+  </div>
+
+  <pre id="dbg"></pre>
+
+<script>
+/* ---- official RainbowBridge JS shim (recovered from h5fs.coloros.com bundle) ---- */
+var ue = window, ce = ue.navigator.userAgent, de = 1;
+var Ae = ue.RainbowBridge || (ue.RainbowBridge = {});
+var pe = {
+  callMethod: function (host, method, data, cb) {
+    var port = me.generatePort();
+    if (typeof cb !== "function") cb = null;
+    me.registerCallback(port, cb);
+    me.callNativeMethod(host, port, method, data);
+  },
+  onComplete: function (port, json) { me.onNativeComplete(port, json); }
+};
+var me = {
+  callbacks: {},
+  registerCallback: function (p, cb) { if (cb) me.callbacks[p] = cb; },
+  getCallback: function (p) { return { callback: me.callbacks[p] || null }; },
+  unRegisterCallback: function (p) { if (me.callbacks[p]) delete me.callbacks[p]; },
+  onNativeComplete: function (p, json) {
+    var cb = me.getCallback(p).callback;
+    me.unRegisterCallback(p);
+    if (cb) cb(me.str2Json(json));
+  },
+  generatePort: function () { return String(Math.floor(Math.random() * (1 << 50))) + (de++); },
+  str2Json: function (s) {
+    if (!s || typeof s !== "string") return s || {};
+    try { return JSON.parse(s.replace(/\n/g, "\\n").replace(/\r/g, "\\r")); }
+    catch (e) { return { status: { code: 1, msg: "params parse error!" } }; }
+  },
+  json2Str: function (o) { return o && typeof o === "object" ? JSON.stringify(o) : (o || ""); },
+  callNativeMethod: function (host, port, method, data) {
+    if (me.isAndroid()) {
+      ue.prompt("rainbow://" + host + ":" + port + "/" + method + "?" + me.json2Str(data), "");
+    }
+  },
+  isAndroid: function () { return ce.toLowerCase().indexOf("android") > -1; },
+  isIos: function () { return ce.toLowerCase().indexOf("iphone") > -1; }
+};
+for (var k in pe) if (pe.hasOwnProperty(k) && !Object.prototype.hasOwnProperty.call(Ae, k)) Ae[k] = pe[k];
+
+/* ---- app-side helpers ---- */
+function callNative(method, data) {
+  return new Promise(function (resolve) {
+    Ae.callMethod("JSCommandMethod", method, data || {}, resolve);
+  });
+}
+var DEBUG = /[\?&]debug=1/.test(location.search);
+function dbg(o) {
+  if (!DEBUG) return;
+  var el = document.getElementById("dbg");
+  el.style.display = "block";
+  el.textContent += (typeof o === "string" ? o : JSON.stringify(o, null, 1)) + "\n";
+}
+
+/* ---- native -> JS entry points (must exist or the WebView "fails to load") ---- */
+window.updateButton = function (json) {
+  dbg(["updateButton", json]);
+  var o = typeof json === "string" ? JSON.parse(json) : (json || {});
+  if (o.positiveButton) document.getElementById("ok").textContent = o.positiveButton;
+  if (o.negativeButton) document.getElementById("later").textContent = o.negativeButton;
+  if (o.noticeContent) document.getElementById("log").textContent = o.noticeContent;
+  var p = parseFloat(o.progress);
+  if (!isNaN(p) && p > 0) { document.getElementById("bar").classList.add("shown");
+    document.getElementById("barFill").style.width = Math.min(100, p) + "%"; }
+  if (o.positiveButtonState === "false" || o.positiveButtonState === false)
+    document.getElementById("ok").setAttribute("disabled", "disabled");
+};
+window.setScreen = function (json) {
+  dbg(["setScreen", json]);
+  var o = typeof json === "string" ? JSON.parse(json) : (json || {});
+  if (o.toolbarHeight) document.body.style.paddingTop = (Number(o.toolbarHeight) || 0) + 12 + "px";
+};
+window.updateOtaInfo = function () { dbg("updateOtaInfo"); refresh(); };
+window.notifyH5OnResume = function () { dbg("notifyH5OnResume"); };
+window.notifyH5EntryOTATheme = function () { dbg("notifyH5EntryOTATheme"); };
+window.notifyH5ExitFullScreen = function () { dbg("notifyH5ExitFullScreen"); };
+window.notifyH5DetectState = function (json) { dbg(["notifyH5DetectState", json]); };
+window.onBeforeCloseH5 = function () { dbg("onBeforeCloseH5"); };
+
+/* ---- render ---- */
+function fmtSize(n) {
+  n = Number(n);
+  if (!n || isNaN(n)) return "--";
+  var u = ["B", "KB", "MB", "GB"], i = 0;
+  while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+  return (i >= 3 ? n.toFixed(2) : n.toFixed(1)) + " " + u[i];
+}
+function major(v) {
+  var m = /(\d+)\.(\d+)/.exec(String(v || ""));
+  return m ? m[1] : String(v || "").replace(/[^\d.].*$/, "") || "17";
+}
+function render(info) {
+  var d = (info && info.data) || {};
+  document.getElementById("bigVer").textContent = major(d.newVersion || d.osVersion);
+  document.getElementById("modelLine").textContent = d.model || "";
+  document.getElementById("newVer").textContent = d.newVersion || "--";
+  document.getElementById("curVer").textContent = d.curVersion || "--";
+  document.getElementById("size").textContent = fmtSize(d.size);
+  document.getElementById("time").textContent = d.versionTime || "--";
+  var log = document.getElementById("log");
+  var msg = d.message || d.content || "";
+  log.textContent = msg || "暂无更新日志";
+  log.className = msg ? "" : "empty";
+}
+function refresh() {
+  callNative("getOtaInfo", {}).then(function (r) { dbg(["getOtaInfo ->", r]); render(r); });
+}
+
+/* ---- actions ---- */
+document.getElementById("ok").addEventListener("click", function () {
+  this.setAttribute("disabled", "disabled");
+  callNative("onClickButtonFromH5", { type: "highLight" }).then(function (r) {
+    dbg(["download ->", r]);
+    var code = r && r.status ? r.status.code : 1;
+    if (code !== 0) document.getElementById("ok").removeAttribute("disabled");
+  });
+});
+document.getElementById("later").addEventListener("click", function () {
+  callNative("showLater", {}).then(function (r) { dbg(["later ->", r]); });
+});
+
+refresh();
+</script>
+</body>
+</html>

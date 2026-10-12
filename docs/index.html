@@ -222,8 +222,10 @@ function loadChangelog() {
     var secs = data && data.sections;
     if (!secs || !secs.length) return false;
     var html = "";
-    secs.forEach(function (s) {
-      if (s.title) html += "<h4>" + htmlEsc(s.title) + "</h4>";
+    var headline = secs[0] && secs[0].title ? secs[0].title : "";
+    secs.forEach(function (s, idx) {
+      /* the first section title is promoted to the card headline */
+      if (s.title && !(idx === 0 && headline)) html += "<h4>" + htmlEsc(s.title) + "</h4>";
       if (s.items && s.items.length) {
         html += "<ul>" + s.items.map(function (i) {
           return "<li>" + htmlEsc(i) + "</li>";
@@ -232,7 +234,7 @@ function loadChangelog() {
     });
     if (html) {
       document.getElementById("log").innerHTML = html;
-      if (secs[0].title) document.getElementById("headline").textContent = secs[0].title;
+      if (headline) document.getElementById("headline").textContent = headline;
       return true;
     }
     return false;

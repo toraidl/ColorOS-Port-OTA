@@ -176,14 +176,17 @@ window.updateButton = function (json) {
   var lbl = document.getElementById("pillLbl");
   if (o.noticeContent) document.getElementById("headline").textContent = o.noticeContent;
   var p = parseFloat(o.progress);
-  if (!isNaN(p) && p > 0) {
+  var pct = (!isNaN(p) && p > 0) ? Math.min(100, p) : 0;
+  if (pct > 0) {
     downloading = true;
-    document.getElementById("fill").style.width = Math.min(100, p) + "%";
-    lbl.textContent = "正在下载 " + p + "%";
+    document.getElementById("fill").style.width = pct + "%";
     document.getElementById("pill").removeAttribute("disabled");
-  } else if (o.positiveButton) {
-    lbl.textContent = o.positiveButton;
   }
+  /* Native formats the current phase itself ("正在下载 x%" while downloading,
+     "正在安装 x%" while update_engine applies). Only fall back to our own
+     wording when it sends no button text. */
+  if (o.positiveButton) lbl.textContent = o.positiveButton;
+  else if (pct > 0) lbl.textContent = "正在下载 " + pct + "%";
   if (o.positiveButtonState === "false" || o.positiveButtonState === false)
     document.getElementById("pill").setAttribute("disabled", "disabled");
 };

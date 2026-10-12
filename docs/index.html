@@ -58,6 +58,13 @@
   .body.hidden{display:none}
   .headline{margin:6px 0 14px;font-size:17px;font-weight:700}
   .body p{margin:0 0 14px;font-size:15px;line-height:1.72;color:rgba(255,255,255,.84)}
+  .body h4{margin:18px 0 10px;font-size:16px;font-weight:700}
+  .body h4:first-child{margin-top:6px}
+  .body ul{margin:0 0 14px;padding:0;list-style:none}
+  .body li{position:relative;margin:0 0 10px;padding-left:15px;
+           font-size:15px;line-height:1.7;color:rgba(255,255,255,.84)}
+  .body li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;
+                   border-radius:50%;background:rgba(255,255,255,.45)}
 
   .foot{flex:0 0 auto;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 16px);
         display:flex;justify-content:center}
@@ -202,6 +209,35 @@ function fmtSize(n) {
   return (i >= 3 ? n.toFixed(2) : n.toFixed(1)) + " " + u[i];
 }
 function esc(s) { return String(s == null ? "" : s); }
+function htmlEsc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  });
+}
+/* Full official changelog, snapshotted from OPPO's CDN into changelog.json. */
+function loadChangelog() {
+  return fetch("changelog.json", { cache: "no-cache" }).then(function (r) {
+    return r.ok ? r.json() : null;
+  }).then(function (data) {
+    var secs = data && data.sections;
+    if (!secs || !secs.length) return false;
+    var html = "";
+    secs.forEach(function (s) {
+      if (s.title) html += "<h4>" + htmlEsc(s.title) + "</h4>";
+      if (s.items && s.items.length) {
+        html += "<ul>" + s.items.map(function (i) {
+          return "<li>" + htmlEsc(i) + "</li>";
+        }).join("") + "</ul>";
+      }
+    });
+    if (html) {
+      document.getElementById("log").innerHTML = html;
+      if (secs[0].title) document.getElementById("headline").textContent = secs[0].title;
+      return true;
+    }
+    return false;
+  }).catch(function () { return false; });
+}
 function major(v) {
   var m = /(\d+)\s*\./.exec(String(v || ""));
   if (m) return m[1];
@@ -229,6 +265,7 @@ function render(info) {
   else { head.textContent = "发现新版本"; }
   log.innerHTML = parts.map(function (p) { return "<p>" + p + "</p>"; }).join("") ||
                   "<p>本次更新包含系统稳定性与兼容性改进。</p>";
+  loadChangelog();
 }
 function refresh() {
   callNative("getOtaInfo", {}).then(function (r) {

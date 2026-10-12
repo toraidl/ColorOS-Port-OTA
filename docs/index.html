@@ -6,82 +6,91 @@
 <title>ColorOS 软件更新</title>
 <style>
   :root{
-    --bg0:#0b0820; --bg1:#1b1140; --fg:#ffffff; --dim:rgba(255,255,255,.62);
-    --card:rgba(255,255,255,.08); --line:rgba(255,255,255,.14);
-    --accent:#ff8a4c; --accent2:#c064ff;
+    --fg:#ffffff; --dim:rgba(255,255,255,.66); --line:rgba(255,255,255,.12);
+    --card:rgba(30,27,44,.52); --blue:#2f6bff; --blue2:#4d86ff;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%}
+  /* Transparent: the native activity draws the "17 / ColorOS / device" artwork
+     behind the WebView, exactly like the stock page. */
   body{
-    background:
-      radial-gradient(120% 80% at 80% 12%, rgba(255,138,76,.34), transparent 60%),
-      radial-gradient(120% 90% at 12% 30%, rgba(192,100,255,.36), transparent 62%),
-      linear-gradient(180deg,var(--bg1),var(--bg0) 62%);
-    color:var(--fg);
+    background:transparent;color:var(--fg);
     font-family:-apple-system,"OPPOSans","Oplus Sans","Noto Sans SC",system-ui,sans-serif;
-    min-height:100%;display:flex;flex-direction:column;
-    padding:calc(env(safe-area-inset-top,0px) + 24px) 22px calc(env(safe-area-inset-bottom,0px) + 18px);
+    display:flex;flex-direction:column;overflow:hidden;
   }
-  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:46vh}
-  .big{
-    font-size:132px;line-height:.92;font-weight:700;letter-spacing:0;
-    background:linear-gradient(180deg,#fff 8%,#ffd9c2 42%,#e9b7ff 96%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
+  /* room for the native hero artwork */
+  .spacer{flex:0 0 40vh;min-height:120px}
+
+  .sheet{
+    flex:1;margin:0 14px 12px;border-radius:20px;background:var(--card);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);
+    display:flex;flex-direction:column;overflow:hidden;
   }
-  .brand{margin-top:6px;font-size:34px;font-weight:600;letter-spacing:.5px;opacity:.95}
-  .model{margin-top:8px;font-size:20px;color:var(--dim)}
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:8px;
-    padding:16px 16px 14px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  .sheet .scroll{overflow-y:auto;padding:20px 20px 12px}
+  .h1{margin:0 0 10px;font-size:21px;font-weight:600}
+  .verline{margin:0 0 16px;font-size:16px;color:rgba(255,255,255,.88);word-break:break-all}
+  .rule{height:1px;background:var(--line);margin:0 -20px 4px}
+
+  .head{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px}
+  .head .t{font-size:22px;font-weight:700}
+  .chev{
+    width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(255,255,255,.10);color:var(--fg);font-size:15px;line-height:1;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .22s ease;
   }
-  .card h2{margin:0 0 10px;font-size:17px;font-weight:600}
-  .row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;font-size:14px}
-  .row .k{color:var(--dim);flex:0 0 auto}
-  .row .v{text-align:right;word-break:break-all}
-  #log{margin:10px 0 0;font-size:14px;line-height:1.62;color:rgba(255,255,255,.86);
-       max-height:26vh;overflow:auto;white-space:pre-wrap;word-break:break-word}
-  #log.empty{color:var(--dim)}
-  .actions{display:flex;gap:12px;margin-top:14px}
-  button{
-    flex:1;height:48px;border-radius:24px;border:0;font-size:16px;font-weight:600;
-    font-family:inherit;color:#fff;background:rgba(255,255,255,.14);cursor:pointer;
+  .chev[data-open="false"]{transform:rotate(180deg)}
+
+  .body{padding-bottom:6px}
+  .body.hidden{display:none}
+  .headline{margin:6px 0 14px;font-size:17px;font-weight:700}
+  .body p{margin:0 0 14px;font-size:15px;line-height:1.72;color:rgba(255,255,255,.84)}
+
+  .foot{flex:0 0 auto;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 16px);
+        display:flex;justify-content:center}
+  .pill{
+    position:relative;width:100%;height:54px;border-radius:27px;overflow:hidden;
+    background:linear-gradient(92deg,var(--blue),var(--blue2));color:#fff;border:0;
+    font-family:inherit;font-size:17px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
   }
-  button.primary{background:linear-gradient(92deg,var(--accent),var(--accent2));color:#fff}
-  button:active{transform:scale(.985);opacity:.92}
-  button[disabled]{opacity:.5;pointer-events:none}
-  .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:12px;display:none}
-  .bar.shown{display:block}
-  .bar i{display:block;height:100%;width:0;background:linear-gradient(92deg,var(--accent),var(--accent2));transition:width .3s}
-  #dbg{position:fixed;left:8px;right:8px;bottom:8px;max-height:34vh;overflow:auto;
-       font:11px/1.45 ui-monospace,monospace;white-space:pre-wrap;background:rgba(0,0,0,.72);
+  .pill .fill{position:absolute;left:0;top:0;bottom:0;width:0;
+              background:rgba(255,255,255,.28);transition:width .35s ease}
+  .pill .lbl{position:relative}
+  .pill[disabled]{opacity:.55;pointer-events:none}
+
+  #dbg{position:fixed;left:8px;right:8px;bottom:8px;max-height:32vh;overflow:auto;
+       font:11px/1.45 ui-monospace,monospace;white-space:pre-wrap;background:rgba(0,0,0,.78);
        border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:8px;display:none;z-index:9}
 </style>
 </head>
 <body>
-  <div class="hero">
-    <div class="big" id="bigVer">17</div>
-    <div class="brand">ColorOS</div>
-    <div class="model" id="modelLine"></div>
-  </div>
+  <div class="spacer"></div>
 
-  <div class="card">
-    <h2 id="cardTitle">发现新版本</h2>
-    <div class="row"><span class="k">新版本</span><span class="v" id="newVer">--</span></div>
-    <div class="row"><span class="k">当前版本</span><span class="v" id="curVer">--</span></div>
-    <div class="row"><span class="k">更新包大小</span><span class="v" id="size">--</span></div>
-    <div class="row"><span class="k">发布时间</span><span class="v" id="time">--</span></div>
-    <div id="log" class="empty">暂无更新日志</div>
-    <div class="bar" id="bar"><i id="barFill"></i></div>
-    <div class="actions">
-      <button id="later">稍后</button>
-      <button id="ok" class="primary">下载并安装</button>
+  <section class="sheet">
+    <div class="scroll">
+      <h1 class="h1">软件版本</h1>
+      <p class="verline" id="verline">--</p>
+      <div class="rule"></div>
+      <div class="head">
+        <span class="t" id="series">ColorOS 17</span>
+        <button class="chev" id="chev" data-open="true" aria-label="展开">⌃</button>
+      </div>
+      <div class="body" id="body">
+        <p class="headline" id="headline">发现新版本</p>
+        <div id="log"></div>
+      </div>
     </div>
-  </div>
+    <div class="foot">
+      <button class="pill" id="pill"><span class="fill" id="fill"></span><span class="lbl" id="pillLbl">下载并安装</span></button>
+    </div>
+  </section>
 
   <pre id="dbg"></pre>
 
 <script>
-/* ---- official RainbowBridge JS shim (recovered from h5fs.coloros.com bundle) ---- */
+/* ---- official RainbowBridge JS shim (recovered from the h5fs.coloros.com bundle) ---- */
 var ue = window, ce = ue.navigator.userAgent, de = 1;
 var Ae = ue.RainbowBridge || (ue.RainbowBridge = {});
 var pe = {
@@ -120,7 +129,6 @@ var me = {
 };
 for (var k in pe) if (pe.hasOwnProperty(k) && !Object.prototype.hasOwnProperty.call(Ae, k)) Ae[k] = pe[k];
 
-/* ---- app-side helpers ---- */
 function callNative(method, data) {
   return new Promise(function (resolve) {
     Ae.callMethod("JSCommandMethod", method, data || {}, resolve);
@@ -134,23 +142,30 @@ function dbg(o) {
   el.textContent += (typeof o === "string" ? o : JSON.stringify(o, null, 1)) + "\n";
 }
 
-/* ---- native -> JS entry points (must exist or the WebView "fails to load") ---- */
+/* ---- native -> JS entry points ---- */
+var downloading = false;
 window.updateButton = function (json) {
   dbg(["updateButton", json]);
   var o = typeof json === "string" ? JSON.parse(json) : (json || {});
-  if (o.positiveButton) document.getElementById("ok").textContent = o.positiveButton;
-  if (o.negativeButton) document.getElementById("later").textContent = o.negativeButton;
-  if (o.noticeContent) document.getElementById("log").textContent = o.noticeContent;
+  var lbl = document.getElementById("pillLbl");
+  if (o.noticeContent) { document.getElementById("headline").textContent = o.noticeContent; }
   var p = parseFloat(o.progress);
-  if (!isNaN(p) && p > 0) { document.getElementById("bar").classList.add("shown");
-    document.getElementById("barFill").style.width = Math.min(100, p) + "%"; }
+  if (!isNaN(p) && p > 0) {
+    downloading = true;
+    document.getElementById("fill").style.width = Math.min(100, p) + "%";
+    lbl.textContent = "正在下载 " + p + "%";
+    document.getElementById("pill").removeAttribute("disabled");
+  } else if (o.positiveButton) {
+    lbl.textContent = o.positiveButton;
+  }
   if (o.positiveButtonState === "false" || o.positiveButtonState === false)
-    document.getElementById("ok").setAttribute("disabled", "disabled");
+    document.getElementById("pill").setAttribute("disabled", "disabled");
 };
 window.setScreen = function (json) {
   dbg(["setScreen", json]);
   var o = typeof json === "string" ? JSON.parse(json) : (json || {});
-  if (o.toolbarHeight) document.body.style.paddingTop = (Number(o.toolbarHeight) || 0) + 12 + "px";
+  var sh = Number(o.screenHeight) || 0;
+  if (sh) document.querySelector(".spacer").style.flexBasis = Math.max(120, Math.round(sh * 0.40)) + "px";
 };
 window.updateOtaInfo = function () { dbg("updateOtaInfo"); refresh(); };
 window.notifyH5OnResume = function () { dbg("notifyH5OnResume"); };
@@ -163,31 +178,31 @@ window.onBeforeCloseH5 = function () { dbg("onBeforeCloseH5"); };
 function fmtSize(n) {
   if (typeof n === "string") {
     var s = n.trim();
-    if (s && isNaN(Number(s))) return s;   /* native already formatted it */
+    if (s && isNaN(Number(s))) return s;     /* native already formatted it */
     n = Number(s);
   }
   n = Number(n);
-  if (!n || isNaN(n)) return "--";
+  if (!n || isNaN(n)) return "";
   var u = ["B", "KB", "MB", "GB"], i = 0;
   while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
   return (i >= 3 ? n.toFixed(2) : n.toFixed(1)) + " " + u[i];
 }
-function major(v) {
-  var m = /(\d+)\.(\d+)/.exec(String(v || ""));
-  return m ? m[1] : String(v || "").replace(/[^\d.].*$/, "") || "17";
-}
+function esc(s) { return String(s == null ? "" : s); }
 function render(info) {
   var d = (info && info.data) || {};
-  document.getElementById("bigVer").textContent = major(d.newVersion || d.osVersion);
-  document.getElementById("modelLine").textContent = d.model || "";
-  document.getElementById("newVer").textContent = d.newVersion || "--";
-  document.getElementById("curVer").textContent = d.curVersion || "--";
-  document.getElementById("size").textContent = fmtSize(d.size);
-  document.getElementById("time").textContent = d.versionTime || "--";
+  var size = fmtSize(d.size);
+  document.getElementById("verline").textContent =
+    esc(d.newVersion || d.otaVersion || "--") + (size ? " | " + size : "");
+  var series = /(\d+)/.exec(String(d.osVersion || d.androidVersion || ""));
+  if (series) document.getElementById("series").textContent = "ColorOS " + series[1];
+  var msg = esc(d.message || d.content || "");
+  var head = document.getElementById("headline");
   var log = document.getElementById("log");
-  var msg = d.message || d.content || "";
-  log.textContent = msg || "暂无更新日志";
-  log.className = msg ? "" : "empty";
+  var parts = msg.split(/\n+/).filter(function (x) { return x.trim(); });
+  if (parts.length > 1) { head.textContent = parts[0]; parts = parts.slice(1); }
+  else { head.textContent = "发现新版本"; }
+  log.innerHTML = parts.map(function (p) { return "<p>" + p + "</p>"; }).join("") ||
+                  "<p>本次更新包含系统稳定性与兼容性改进。</p>";
 }
 function refresh() {
   callNative("getOtaInfo", {}).then(function (r) {
@@ -205,23 +220,25 @@ function showWebView() {
   if (shown) return;
   shown = true;
   callNative("showLoading", {
-    show: false,
-    error: false,
+    show: false, error: false,
     height: Math.round(document.documentElement.scrollHeight || 0)
   }).then(function (r) { dbg(["showLoading ->", r]); });
 }
 
 /* ---- actions ---- */
-document.getElementById("ok").addEventListener("click", function () {
+document.getElementById("chev").addEventListener("click", function () {
+  var open = this.getAttribute("data-open") === "true";
+  this.setAttribute("data-open", open ? "false" : "true");
+  document.getElementById("body").className = open ? "body hidden" : "body";
+});
+document.getElementById("pill").addEventListener("click", function () {
+  if (downloading) return;
   this.setAttribute("disabled", "disabled");
   callNative("onClickButtonFromH5", { type: "highLight" }).then(function (r) {
     dbg(["download ->", r]);
     var code = r && r.status ? r.status.code : 1;
-    if (code !== 0) document.getElementById("ok").removeAttribute("disabled");
+    if (code !== 0) document.getElementById("pill").removeAttribute("disabled");
   });
-});
-document.getElementById("later").addEventListener("click", function () {
-  callNative("showLater", {}).then(function (r) { dbg(["later ->", r]); });
 });
 
 refresh();

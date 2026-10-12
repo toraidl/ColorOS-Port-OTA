@@ -185,7 +185,25 @@ function render(info) {
   log.className = msg ? "" : "empty";
 }
 function refresh() {
-  callNative("getOtaInfo", {}).then(function (r) { dbg(["getOtaInfo ->", r]); render(r); });
+  callNative("getOtaInfo", {}).then(function (r) {
+    dbg(["getOtaInfo ->", r]);
+    render(r);
+    showWebView();
+  });
+}
+
+/* Native keeps the WebView hidden behind the stock loading view until the page
+   asks for it. showLoading({show:false}) also runs FragmentBusy.F(), which
+   cancels the 15s "no connection" watchdog armed when the page was loaded. */
+var shown = false;
+function showWebView() {
+  if (shown) return;
+  shown = true;
+  callNative("showLoading", {
+    show: false,
+    error: false,
+    height: Math.round(document.documentElement.scrollHeight || 0)
+  }).then(function (r) { dbg(["showLoading ->", r]); });
 }
 
 /* ---- actions ---- */
@@ -202,6 +220,7 @@ document.getElementById("later").addEventListener("click", function () {
 });
 
 refresh();
+setTimeout(showWebView, 1500);
 </script>
 </body>
 </html>

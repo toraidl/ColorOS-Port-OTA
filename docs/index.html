@@ -276,6 +276,8 @@ function refresh() {
   callNative("getOtaInfo", {}).then(function (r) {
     dbg(["getOtaInfo ->", r]);
     render(r);
+    var d = (r && r.data) || {};
+    if (d.updateButton) window.updateButton(d.updateButton);
     showWebView();
   });
 }

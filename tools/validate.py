@@ -84,6 +84,9 @@ def check_device(path: pathlib.Path, schema: dict) -> list[str]:
     if host not in ALLOWED_URL_HOSTS:
         errs.append(f"{where}: url host '{host}' not in allow-list")
 
+    if not obj.get("size"):
+        errs.append(f"{where}: 'size' must be the real package size in bytes")
+
     changelog = obj.get("changelog")
     if changelog:
         log_path = ROOT / changelog
@@ -105,10 +108,17 @@ def main() -> int:
         print("no device manifests found")
         return 1
     all_errs: list[str] = []
+    warnings: list[str] = []
     for path in files:
         all_errs.extend(check_device(path, schema))
+        obj = json.loads(path.read_text(encoding="utf-8"))
+        if not obj.get("md5"):
+            warnings.append(f"devices/{path.name}: md5 is empty (downloads still "
+                            f"work, but the package is not integrity checked)")
     for err in all_errs:
         print("FAIL", err)
+    for warn in warnings:
+        print("WARN", warn)
     if all_errs:
         print(f"{len(all_errs)} problem(s)")
         return 1

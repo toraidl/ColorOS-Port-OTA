@@ -56,6 +56,16 @@ See `schema/device.schema.json`. The important ones:
 `tools/build_dist.py` turns `changelog` into a rendered `description` (HTML)
 so the app can show it without any network fetch of its own.
 
+Two more fields drive the OTA app's port engine:
+
+| field | meaning |
+|-------|---------|
+| `displayName` | model string on the H5 update page (use the stock value, `ro.vendor.oplus.market.name`, e.g. `OPPO Find X3` / `OnePlus 8T`) |
+| `forceUpdate` | `true` offers the package even when `version` is not newer than the installed build, for repacked content without a version bump |
+
+The engine posts a status-bar notification when a background check finds an update
+(the stock boot/connectivity triggers still drive those checks).
+
 ## Adding a release
 
 1. Upload the package to SourceForge under `ColorOS17/<version>/`.

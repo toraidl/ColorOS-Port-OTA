@@ -94,6 +94,10 @@
     "descriptionUrl": {
       "type": "string",
       "pattern": "^https://"
+    },
+    "forceUpdate": {
+      "type": "boolean",
+      "description": "Offer this package even when its version is not newer than the installed one (repacked content, changed notes). Device side: persist.sys.portota.force=1"
     }
   }
 }

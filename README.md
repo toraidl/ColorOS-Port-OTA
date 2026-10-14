@@ -77,6 +77,20 @@ The engine posts a status-bar notification when a background check finds an upda
 CI (`validate.yml`) re-runs steps 4 automatically and fails the build if the
 manifest is invalid, so a broken entry can never reach a device.
 
+## Publishing to the CDN (order matters)
+
+The app reads `dist/<DEVICE>.json` from jsDelivr first (mainland-China
+reachable), and jsDelivr caches `@main` for hours. Purging a path *before* the
+push has propagated therefore re-caches the **old** file. Correct order:
+
+1. `git push`, then wait until the raw copy shows the new content:
+   `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
+2. Purge jsDelivr *after* that, for every changed manifest (and `dist/index.json`):
+   `curl https://purge.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/<DEVICE>.json`
+3. Verify the CDN copy, then the H5 page.
+4. When `docs/index.html` changes, bump the `?v=` in `descriptionUrl` (both
+   manifests): devices cache the page by URL, so a stale `v` keeps the old page.
+
 ## Version comparison
 
 The updater compares numeric fields only: it strips everything up to the first

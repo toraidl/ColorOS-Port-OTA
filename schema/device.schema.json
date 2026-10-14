@@ -3,7 +3,13 @@
   "$id": "https://github.com/toraidl/ColorOS-Port-OTA/schema/device.schema.json",
   "title": "ColorOS port OTA device manifest",
   "type": "object",
-  "required": ["device", "version", "romVersion", "url", "id"],
+  "required": [
+    "device",
+    "version",
+    "romVersion",
+    "url",
+    "id"
+  ],
   "additionalProperties": false,
   "properties": {
     "device": {
@@ -13,7 +19,9 @@
     },
     "aliases": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Human readable marketing names, for documentation only"
     },
     "version": {
@@ -21,14 +29,29 @@
       "minLength": 5,
       "description": "New build id, e.g. KB2000_17.0.0.152(CN01)"
     },
-    "romVersion": { "type": "string", "minLength": 1 },
-    "coloros": { "type": "string" },
-    "android": { "type": "string" },
+    "romVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coloros": {
+      "type": "string"
+    },
+    "android": {
+      "type": "string"
+    },
     "type": {
       "type": "string",
-      "enum": ["official", "beta", "hotfix", "test"]
+      "enum": [
+        "official",
+        "beta",
+        "hotfix",
+        "test"
+      ]
     },
-    "packageType": { "type": "integer", "minimum": 0 },
+    "packageType": {
+      "type": "integer",
+      "minimum": 0
+    },
     "size": {
       "type": "integer",
       "minimum": 0,
@@ -44,7 +67,10 @@
       "pattern": "^https://",
       "description": "Direct package URL"
     },
-    "id": { "type": "string", "minLength": 3 },
+    "id": {
+      "type": "string",
+      "minLength": 3
+    },
     "changelog": {
       "type": "string",
       "description": "Repo-relative path to the Markdown changelog"
@@ -59,7 +85,7 @@
     },
     "displayName": {
       "type": "string",
-      "description": "Model string rendered on the H5 update page; falls back to the device code (ro.product.model) when absent"
+      "description": "Model string rendered on the H5 update page; use the value the stock UI shows (ro.vendor.oplus.market.name, e.g. OPPO Find X3 / OnePlus 8T). Falls back to the device code when absent."
     },
     "description": {
       "type": "string",

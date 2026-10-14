@@ -259,12 +259,12 @@ function loadChangelog(seq) {
         }).join("") + "</ul>";
       }
     });
-    if (html) {
-      document.getElementById("log").innerHTML = html;
-      if (headline) document.getElementById("headline").textContent = headline;
-      return true;
-    }
-    return false;
+    if (!html) return false;
+    var head = document.getElementById("headline");
+    head.style.display = "";
+    head.textContent = headline || "更新内容";
+    document.getElementById("log").innerHTML = html;
+    return true;
   }).catch(function () { return false; });
 }
 function major(v) {
@@ -286,10 +286,10 @@ var cachedManifestCode = "";
 function applyManifest(m, seq) {
   if (!m || seq !== renderSeq) return false;
   if (m.displayName) document.getElementById("modelLine").textContent = m.displayName;
-  if (m.summary) document.getElementById("headline").textContent = m.summary;
   if (m.description) {
-    /* This release's changelog. Its leading <h2> title would duplicate the
-       card headline (and the page styles h4, not h2), so drop it. */
+    /* Show the release notes only: no summary headline, no <h2> title from the
+       markdown (the version is already on the card). */
+    document.getElementById("headline").style.display = "none";
     document.getElementById("log").innerHTML =
       m.description.replace(/^\s*<h2>[\s\S]*?<\/h2>\s*/, "");
     return true;

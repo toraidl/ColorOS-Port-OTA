@@ -1,15 +1,20 @@
 {
   "device": "PEDM00",
-  "aliases": ["OPPO Find X3"],
-  "version": "PEDM00_17.0.0.106(CN01)",
-  "romVersion": "PEDM00_17.0.0.106(CN01)",
+  "aliases": [
+    "OPPO Find X3"
+  ],
+  "version": "PEDM00_17.0.0.152(CN01)",
+  "romVersion": "PEDM00_17.0.0.152(CN01)",
   "coloros": "17.0.0",
   "android": "17",
   "type": "official",
   "packageType": 0,
-  "size": 8719078557,
-  "md5": "",
-  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.106/ota_full-PEDM00_17.0.0.106-PMA110-10100838-CN-2026-09-01-1a9b939011.zip/download",
-  "id": "PEDM00_17.0.0.106",
-  "changelog": "changelogs/PEDM00/17.0.0.106.md"
+  "size": 8816785698,
+  "md5": "b26e98b0b2f1bababad5a731ef46b3aa",
+  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.152/ota_full-PEDM00_17.0.0.152-PYB110-10142123-CN-2026-10-01-b26e98b0b2.zip/download",
+  "id": "PEDM00_17.0.0.152",
+  "changelog": "changelogs/PEDM00/17.0.0.152.md",
+  "versionTime": "2026.10.01",
+  "summary": "ColorOS 17.0.0.152 移植版更新，修复亮度曲线问题",
+  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=10"
 }

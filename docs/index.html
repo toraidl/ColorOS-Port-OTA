@@ -321,11 +321,17 @@ function render(info) {
                   "<p>本次更新包含系统稳定性与兼容性改进。</p>";
   /* Prefer this device's own manifest: its description is the release
      changelog of the package the card points at, and displayName is the model
-     string to show. The official changelog is only a fallback. */
-  var code = String(d.model || "").trim();
+     string to show. The official changelog is only a fallback.
+     Device code: the native payload's newVersion is the manifest "version"
+     field ("KB2000_17.0.0.152(CN01)"), so its prefix before "_" is the code.
+     d.model is only a last resort: some ROMs put a market string there. */
+  var code = String(d.newVersion || d.otaVersion || "").split("_")[0].trim() ||
+             String(d.model || "").trim();
+  dbg(["manifest code", code]);
   if (cachedManifest && cachedManifestCode === code) applyManifest(cachedManifest, seq);
   loadManifest(code).then(function (m) {
     if (seq !== renderSeq) return;
+    dbg(["manifest", code, m ? "loaded" : "unavailable"]);
     if (m) {
       cachedManifest = m;
       cachedManifestCode = code;

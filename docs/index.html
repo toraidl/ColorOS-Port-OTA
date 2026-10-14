@@ -238,11 +238,14 @@ function loadManifest(code) {
   return next();
 }
 
-/* Full official changelog, snapshotted from OPPO's CDN into changelog.json. */
-function loadChangelog() {
+/* Full official ColorOS changelog (docs/changelog.json). Only used when the
+   device's own manifest is unavailable: the port's release changelog must never
+   be replaced by it. `seq` drops results that a newer render superseded. */
+function loadChangelog(seq) {
   return fetch("changelog.json", { cache: "no-cache" }).then(function (r) {
     return r.ok ? r.json() : null;
   }).then(function (data) {
+    if (seq !== renderSeq) return false;
     var secs = data && data.sections;
     if (!secs || !secs.length) return false;
     var html = "";
@@ -270,7 +273,32 @@ function major(v) {
   m = /(\d+)/.exec(String(v || ""));
   return m ? m[1] : "17";
 }
+/* The native side can re-enter render() (notifyH5OnResume -> updateOtaInfo ->
+   refresh) while an earlier manifest/changelog fetch is still in flight; before
+   the sequence guard, whichever fetch finished last decided what was shown.
+   renderSeq drops stale results and the manifest is cached per device so a
+   re-render never flickers back to a placeholder. */
+var renderSeq = 0;
+var cachedManifest = null;
+var cachedManifestCode = "";
+
+/* Apply a manifest to the card. Returns true when it supplied the changelog. */
+function applyManifest(m, seq) {
+  if (!m || seq !== renderSeq) return false;
+  if (m.displayName) document.getElementById("modelLine").textContent = m.displayName;
+  if (m.summary) document.getElementById("headline").textContent = m.summary;
+  if (m.description) {
+    /* This release's changelog. Its leading <h2> title would duplicate the
+       card headline (and the page styles h4, not h2), so drop it. */
+    document.getElementById("log").innerHTML =
+      m.description.replace(/^\s*<h2>[\s\S]*?<\/h2>\s*/, "");
+    return true;
+  }
+  return false;
+}
+
 function render(info) {
+  var seq = ++renderSeq;
   var d = (info && info.data) || {};
   var ver = major(d.osVersion || d.androidVersion || d.newVersion);
   /* Official numeral artwork for ColorOS 17; text fallback for anything else. */
@@ -293,15 +321,19 @@ function render(info) {
                   "<p>本次更新包含系统稳定性与兼容性改进。</p>";
   /* Prefer this device's own manifest: its description is the release
      changelog of the package the card points at, and displayName is the model
-     string to show. Fall back to the official ColorOS changelog. */
+     string to show. The official changelog is only a fallback. */
   var code = String(d.model || "").trim();
+  if (cachedManifest && cachedManifestCode === code) applyManifest(cachedManifest, seq);
   loadManifest(code).then(function (m) {
+    if (seq !== renderSeq) return;
     if (m) {
-      if (m.displayName) document.getElementById("modelLine").textContent = m.displayName;
-      if (m.summary) head.textContent = m.summary;
-      if (m.description) { log.innerHTML = m.description; return; }
+      cachedManifest = m;
+      cachedManifestCode = code;
+      if (applyManifest(m, seq)) return;
+    } else if (cachedManifest && cachedManifestCode === code) {
+      return;                 /* keep the cached release changelog */
     }
-    loadChangelog();
+    loadChangelog(seq);
   });
 }
 function refresh() {

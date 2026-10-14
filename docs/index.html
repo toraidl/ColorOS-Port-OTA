@@ -217,6 +217,27 @@ function htmlEsc(s) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
   });
 }
+/* The device's own manifest (dist/<DEVICE>.json): it carries this port's
+   release changelog and the display name for the model line. The page asks the
+   native side for the device code and fetches the manifest from the CDN, so the
+   changelog shown is the one shipped with that device's package. */
+var MANIFEST_BASES = [
+  "https://cdn.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/",
+  "https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/"
+];
+function loadManifest(code) {
+  if (!code) return Promise.resolve(null);
+  var i = 0;
+  function next() {
+    if (i >= MANIFEST_BASES.length) return Promise.resolve(null);
+    var url = MANIFEST_BASES[i++] + encodeURIComponent(code) + ".json";
+    return fetch(url, { cache: "no-cache" }).then(function (r) {
+      return r.ok ? r.json() : next();
+    }).catch(function () { return next(); });
+  }
+  return next();
+}
+
 /* Full official changelog, snapshotted from OPPO's CDN into changelog.json. */
 function loadChangelog() {
   return fetch("changelog.json", { cache: "no-cache" }).then(function (r) {
@@ -270,7 +291,18 @@ function render(info) {
   else { head.textContent = "发现新版本"; }
   log.innerHTML = parts.map(function (p) { return "<p>" + p + "</p>"; }).join("") ||
                   "<p>本次更新包含系统稳定性与兼容性改进。</p>";
-  loadChangelog();
+  /* Prefer this device's own manifest: its description is the release
+     changelog of the package the card points at, and displayName is the model
+     string to show. Fall back to the official ColorOS changelog. */
+  var code = String(d.model || "").trim();
+  loadManifest(code).then(function (m) {
+    if (m) {
+      if (m.displayName) document.getElementById("modelLine").textContent = m.displayName;
+      if (m.summary) head.textContent = m.summary;
+      if (m.description) { log.innerHTML = m.description; return; }
+    }
+    loadChangelog();
+  });
 }
 function refresh() {
   callNative("getOtaInfo", {}).then(function (r) {

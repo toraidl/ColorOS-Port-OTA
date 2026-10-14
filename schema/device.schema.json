@@ -57,6 +57,10 @@
       "type": "string",
       "description": "One line summary rendered above the changelog by the H5 page"
     },
+    "displayName": {
+      "type": "string",
+      "description": "Model string rendered on the H5 update page; falls back to the device code (ro.product.model) when absent"
+    },
     "description": {
       "type": "string",
       "description": "Inline description (source manifests normally use changelog instead)"

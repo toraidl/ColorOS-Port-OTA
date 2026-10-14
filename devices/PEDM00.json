@@ -16,5 +16,6 @@
   "changelog": "changelogs/PEDM00/17.0.0.152.md",
   "versionTime": "2026.10.01",
   "summary": "ColorOS 17.0.0.152 移植版更新，修复亮度曲线问题",
-  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=10"
+  "displayName": "PEDM00",
+  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=11"
 }

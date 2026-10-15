@@ -2,14 +2,14 @@
   "devices": [
     {
       "device": "KB2000",
-      "version": "KB2000_17.0.0.107(CN01)",
+      "version": "KB2000_17.0.0.152(CN01)",
       "coloros": "17.0.0",
       "android": "17",
       "manifest": "KB2000.json"
     },
     {
       "device": "PEDM00",
-      "version": "PEDM00_17.0.0.107(CN01)",
+      "version": "PEDM00_17.0.0.152(CN01)",
       "coloros": "17.0.0",
       "android": "17",
       "manifest": "PEDM00.json"

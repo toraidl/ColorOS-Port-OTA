@@ -3,20 +3,19 @@
   "aliases": [
     "OnePlus 8T"
   ],
-  "version": "KB2000_17.0.0.107(CN01)",
-  "romVersion": "KB2000_17.0.0.107(CN01)",
+  "version": "KB2000_17.0.0.152(CN01)",
+  "romVersion": "KB2000_17.0.0.152(CN01)",
   "coloros": "17.0.0",
   "android": "17",
   "type": "official",
   "packageType": 0,
-  "size": 7862795651,
-  "md5": "118e9315a804204f8e6e8a2a47e9abc6",
-  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.107/ota_full-KB2000_17.0.0.107-PMA110-10152216-CN-2026-10-01-118e9315a8.zip/download",
-  "id": "KB2000_17.0.0.107",
-  "changelog": "changelogs/KB2000/17.0.0.107.md",
+  "size": 7965757535,
+  "md5": "2d64b20bc7c9337ed4506403519ce7e5",
+  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.152/ota_full-KB2000_17.0.0.152-PYB110-10122308-CN-2026-10-01-2d64b20bc7.zip/download",
+  "id": "KB2000_17.0.0.152",
+  "changelog": "changelogs/KB2000/17.0.0.152.md",
   "versionTime": "2026.10.01",
-  "summary": "ColorOS 17.0.0.107 移植版更新，修复基带卡死问题",
+  "summary": "ColorOS 17.0.0.152 移植版更新",
   "displayName": "OnePlus 8T",
-  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=15",
-  "forceUpdate": true
+  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=15"
 }

@@ -27,17 +27,30 @@ tools/build_dist.py          # renders changelogs and builds dist/
 
 Never edit `dist/` by hand - it is regenerated from `devices/` + `changelogs/`.
 
+## Mirrors
+
+The metadata repo is pushed to two places and both must stay in sync:
+
+| remote | URL |
+|--------|-----|
+| `origin` (GitHub) | `https://github.com/toraidl/ColorOS-Port-OTA` |
+| `gitee` | `https://gitee.com/torai/color-os-port-ota` |
+
 ## What the app fetches
 
 The updater tries these URLs for `<DEVICE>` (its `ro.product.model`, upper
 cased), in order, and stops at the first 2xx JSON response:
 
 1. `persist.sys.portota.base` (override, for testing)
-2. `https://cdn.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/<DEVICE>.json`
-3. `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
+2. `https://gitee.com/torai/color-os-port-ota/raw/main/dist/<DEVICE>.json`
+3. `https://cdn.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/<DEVICE>.json`
+4. `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
 
-jsDelivr is preferred because it is a CDN mirror that stays reachable from
-mainland China, where `raw.githubusercontent.com` is frequently blocked.
+Gitee is preferred because it is directly reachable and fast from mainland
+China; jsDelivr (a CDN mirror that has to be purged after every push) is the
+fallback, and `raw.githubusercontent.com` is frequently blocked there. The
+Gitee `raw` endpoint answers with a 302 to `raw.giteeusercontent.com`, which the
+app's HTTP client follows automatically.
 
 ## Manifest fields
 
@@ -77,14 +90,16 @@ The engine posts a status-bar notification when a background check finds an upda
 CI (`validate.yml`) re-runs steps 4 automatically and fails the build if the
 manifest is invalid, so a broken entry can never reach a device.
 
-## Publishing to the CDN (order matters)
+## Publishing (order matters)
 
-The app reads `dist/<DEVICE>.json` from jsDelivr first (mainland-China
-reachable), and jsDelivr caches `@main` for hours. Purging a path *before* the
-push has propagated therefore re-caches the **old** file. Correct order:
+The app reads `dist/<DEVICE>.json` from Gitee first, then jsDelivr, and jsDelivr
+caches `@main` for hours. Purging a path *before* the push has propagated
+therefore re-caches the **old** file. Correct order:
 
-1. `git push`, then wait until the raw copy shows the new content:
+1. `git push origin main` **and** `git push gitee main`, then wait until both
+   raw copies show the new content:
    `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
+   `https://gitee.com/torai/color-os-port-ota/raw/main/dist/<DEVICE>.json`
 2. Purge jsDelivr *after* that, for every changed manifest (and `dist/index.json`):
    `curl https://purge.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/<DEVICE>.json`
 3. Verify the CDN copy, then the H5 page.

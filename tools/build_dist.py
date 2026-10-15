@@ -15,6 +15,10 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEVICES = ROOT / "devices"
 DIST = ROOT / "dist"
+# Same-origin copy served by the H5 page (GitHub Pages publishes docs/): the
+# page fetches dist/<DEVICE>.json from its own origin first, so the update card
+# no longer depends on a CDN purge having propagated.
+DOCS_DIST = ROOT / "docs" / "dist"
 
 
 def md_to_html(md: str) -> str:
@@ -69,14 +73,21 @@ def build_one(path: pathlib.Path) -> dict:
     return obj
 
 
+def write_json(path: pathlib.Path, obj: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8")
+
+
 def main() -> int:
     DIST.mkdir(exist_ok=True)
+    DOCS_DIST.mkdir(parents=True, exist_ok=True)
     index: list[dict] = []
     for path in sorted(DEVICES.glob("*.json")):
         obj = build_one(path)
         target = DIST / f"{obj['device']}.json"
-        target.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n",
-                          encoding="utf-8")
+        write_json(target, obj)
+        write_json(DOCS_DIST / target.name, obj)
         index.append({
             "device": obj["device"],
             "version": obj["version"],
@@ -85,9 +96,8 @@ def main() -> int:
             "manifest": target.name,
         })
         print("built", target.relative_to(ROOT))
-    (DIST / "index.json").write_text(
-        json.dumps({"devices": index}, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8")
+    write_json(DIST / "index.json", {"devices": index})
+    write_json(DOCS_DIST / "index.json", {"devices": index})
     print("built dist/index.json")
     return 0
 

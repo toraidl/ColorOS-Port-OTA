@@ -1,0 +1,22 @@
+{
+  "device": "PEDM00",
+  "aliases": [
+    "OPPO Find X3"
+  ],
+  "version": "PEDM00_17.0.0.107(CN01)",
+  "romVersion": "PEDM00_17.0.0.107(CN01)",
+  "coloros": "17.0.0",
+  "android": "17",
+  "type": "official",
+  "packageType": 0,
+  "size": 8719963647,
+  "md5": "d4e1dc469ca7bf84b9785af389e0abf1",
+  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.107/ota_full-PEDM00_17.0.0.107-PMA110-10151938-CN-2026-10-01-d4e1dc469c.zip/download",
+  "id": "PEDM00_17.0.0.107",
+  "versionTime": "2026.10.01",
+  "summary": "ColorOS 17.0.0.107 移植版更新，修复基带卡死与相机闪退",
+  "displayName": "OPPO Find X3",
+  "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=15",
+  "forceUpdate": true,
+  "description": "<h2>OPPO Find X3 (PEDM00) 17.0.0.107</h2>\n<ul>\n<li>基于 ColorOS 17.0.0.106（PMA110 移植包）重新制作，显示版本更新为 17.0.0.107，安全补丁 2026-10-01。</li>\n<li>修复基带异常导致的卡死问题：内核更新了 modem/MHI 初始化与 MSI 兼容修复，避免 modem 启动失败触发整机卡死。</li>\n<li>Find X3 专项修复相机闪退：补齐 OplusCamera 所需的 SDK 声明与 native 依赖，相机可正常启动。</li>\n<li>由社区 OTA 元数据仓库提供，保持官方\"软件更新\"界面。</li>\n</ul>"
+}

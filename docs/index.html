@@ -219,9 +219,13 @@ function htmlEsc(s) {
 }
 /* The device's own manifest (dist/<DEVICE>.json): it carries this port's
    release changelog and the display name for the model line. The page asks the
-   native side for the device code and fetches the manifest from the CDN, so the
-   changelog shown is the one shipped with that device's package. */
+   native side for the device code and fetches the manifest from its own origin
+   first (docs/dist/ on GitHub Pages), so the changelog shown is the one shipped
+   with that device's package and never depends on a CDN purge. jsDelivr and raw
+   GitHub stay as fallbacks; both send CORS headers, which Gitee does not, so a
+   Gitee URL cannot be used from this page. */
 var MANIFEST_BASES = [
+  "dist/",
   "https://cdn.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/",
   "https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/"
 ];

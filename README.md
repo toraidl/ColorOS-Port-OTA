@@ -20,12 +20,14 @@ devices/<DEVICE>.json        # source manifest, one per device (hand edited)
 changelogs/<DEVICE>/<ver>.md # source changelog (Markdown)
 dist/<DEVICE>.json           # generated - this is what the app fetches
 dist/index.json              # generated device index
+docs/dist/<DEVICE>.json      # generated same-origin copy for the H5 page
 schema/device.schema.json    # JSON schema for devices/*.json
 tools/validate.py            # schema + sanity checks (used by CI)
-tools/build_dist.py          # renders changelogs and builds dist/
+tools/build_dist.py          # renders changelogs and builds dist/ + docs/dist/
 ```
 
-Never edit `dist/` by hand - it is regenerated from `devices/` + `changelogs/`.
+Never edit `dist/` or `docs/dist/` by hand - both are regenerated from
+`devices/` + `changelogs/`.
 
 ## Mirrors
 
@@ -92,17 +94,19 @@ manifest is invalid, so a broken entry can never reach a device.
 
 ## Publishing (order matters)
 
-The app reads `dist/<DEVICE>.json` from Gitee first, then jsDelivr, and jsDelivr
-caches `@main` for hours. Purging a path *before* the push has propagated
-therefore re-caches the **old** file. Correct order:
+The H5 page (`docs/index.html` on GitHub Pages) fetches the manifest from its
+own origin first (`docs/dist/<DEVICE>.json`), so the changelog it shows only
+needs the Pages deploy to settle. The native app prefers Gitee, then jsDelivr,
+then raw GitHub; jsDelivr caches `@main` for hours per edge, so a purge *before*
+the push has propagated re-caches the **old** file. Correct order:
 
-1. `git push origin main` **and** `git push gitee main`, then wait until both
-   raw copies show the new content:
-   `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
+1. `git push origin main` **and** `git push gitee main`, then wait until the raw
+   copies show the new content:
    `https://gitee.com/torai/color-os-port-ota/raw/main/dist/<DEVICE>.json`
+   `https://raw.githubusercontent.com/toraidl/ColorOS-Port-OTA/main/dist/<DEVICE>.json`
 2. Purge jsDelivr *after* that, for every changed manifest (and `dist/index.json`):
    `curl https://purge.jsdelivr.net/gh/toraidl/ColorOS-Port-OTA@main/dist/<DEVICE>.json`
-3. Verify the CDN copy, then the H5 page.
+3. Verify the jsDelivr copy, then the H5 page (`/ColorOS-Port-OTA/index.html`).
 4. When `docs/index.html` changes, bump the `?v=` in `descriptionUrl` (both
    manifests): devices cache the page by URL, so a stale `v` keeps the old page.
 

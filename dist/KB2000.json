@@ -17,5 +17,5 @@
   "summary": "ColorOS 17.0.0.155 移植版更新",
   "displayName": "OnePlus 8T",
   "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=15",
-  "description": "<h2>OnePlus 8T (KB2000) 17.0.0.155</h2>\n<p>基于 PYB110_17.0.0.155 制作。</p>\n<h3>系统</h3>\n<p>优化部分场景下的系统稳定性与流畅性。</p>\n<h3>更新包（17.0.0.155Patch02）</h3>\n<p>优化部分场景的系统稳定性。</p>\n<h3>内核</h3>\n<p>优化部分场景下卡死问题。</p>\n<p>感谢 @xxtvrxx233 对内核优化的帮助。</p>"
+  "description": "<h2>OnePlus 8T (KB2000) 17.0.0.155</h2>\n<p>基于 PYB110_17.0.0.155 制作。</p>\n<h3>系统</h3>\n<p>优化部分场景下的系统稳定性与流畅性。</p>\n<h3>更新包（17.0.0.155Patch02）</h3>\n<p>优化部分场景的系统稳定性。</p>\n<h3>内核</h3>\n<p>优化部分场景下卡死问题。（感谢 @xxtvrxx233）</p>"
 }

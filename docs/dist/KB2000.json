@@ -3,19 +3,19 @@
   "aliases": [
     "OnePlus 8T"
   ],
-  "version": "KB2000_17.0.0.152(CN01)",
-  "romVersion": "KB2000_17.0.0.152(CN01)",
+  "version": "KB2000_17.0.0.155(CN01)",
+  "romVersion": "KB2000_17.0.0.155(CN01)",
   "coloros": "17.0.0",
   "android": "17",
   "type": "official",
   "packageType": 0,
-  "size": 7965757535,
-  "md5": "2d64b20bc7c9337ed4506403519ce7e5",
-  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.152/ota_full-KB2000_17.0.0.152-PYB110-10122308-CN-2026-10-01-2d64b20bc7.zip/download",
-  "id": "KB2000_17.0.0.152",
-  "versionTime": "2026.10.01",
-  "summary": "ColorOS 17.0.0.152 移植版更新",
+  "size": 7966242621,
+  "md5": "37c0e12f9d34acb4105d717e046b2d2f",
+  "url": "https://sourceforge.net/projects/coloros-port/files/ColorOS17/17.0.0.155/ota_full-KB2000_17.0.0.155-PYB110-10171911-CN-2026-10-01-37c0e12f9d.zip/download",
+  "id": "KB2000_17.0.0.155",
+  "versionTime": "2026.10.17",
+  "summary": "ColorOS 17.0.0.155 移植版更新",
   "displayName": "OnePlus 8T",
   "descriptionUrl": "https://toraidl.github.io/ColorOS-Port-OTA/index.html?v=15",
-  "description": "<h2>OnePlus 8T (KB2000) 17.0.0.152</h2>\n<ul>\n<li>同步 ColorOS 17.0.0.152（PYB110 移植底包，2026-10-01）。</li>\n<li>针对 OnePlus 8T 内核与 vendor 组件的移植兼容性修复。</li>\n<li>由社区 OTA 元数据仓库提供，保持官方\"软件更新\"界面。</li>\n</ul>"
+  "description": "<h2>OnePlus 8T (KB2000) 17.0.0.155</h2>\n<p>基于 PYB110_17.0.0.155 制作。</p>\n<h3>系统</h3>\n<p>优化部分场景下的系统稳定性与流畅性。</p>\n<h3>更新包（17.0.0.155Patch02）</h3>\n<p>优化部分场景的系统稳定性。</p>\n<h3>内核</h3>\n<p>优化部分场景下卡死问题。</p>"
 }
